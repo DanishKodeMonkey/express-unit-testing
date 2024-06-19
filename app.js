@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 
-const indexRouter = require('./index');
+const indexRouter = require('./routes/index');
 app.use('/', indexRouter);
 
 app.listen(3000, () => console.log('running'));
