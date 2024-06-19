@@ -96,3 +96,42 @@ test('testing route works', (done) => {
 ```
 
 If a real database was used, similar methods would be used against a test or mock database.
+
+To that effect, we can use mongodb-memory-server to spin up a in-memory mongoDB server to connect o and use in a testing enviroment. Since its fresh, we wont have to worry about poluting our production databases.
+
+To do this, there is some additional set up to be done.
+
+First, we need to seperate mongo/mongoose setup by creating seperate configuration files for produciton, and testing. In this case just making one for the testing enviroment.
+
+In a real world example however, seperating the configurations in different files is important to prevent accidently touching the actual production database.
+
+So, in our config folder we have the mongoConfigTesting.js file
+
+```javascript
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
+async function initializeMongoServer() {
+    const mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+
+    mongoose.connect(mongoUri);
+
+    mongoose.connection.on('error', (e) => {
+        if (e.message.code === 'ETIMEDOUT') {
+            console.log(e);
+            mongoose.connect(mongoUri);
+        }
+        console.log(e);
+    });
+
+    mongoose.connection.once('open', () => {
+        console.log(`MongoDB successfully connected to ${mongoURI}`);
+    });
+}
+module.exports = initializeMongoServer;
+```
+
+From this we now have a function initializeMongoServer that creates a mock database, generate a URI, and pass it to mongoose to connect to.
+
+We can now call this function during testing to hook up the mock database!

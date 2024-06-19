@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "mongodb-memory-server": "^9.3.0",
+    "mongoose": "^8.4.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",
